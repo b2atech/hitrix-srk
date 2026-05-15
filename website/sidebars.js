@@ -34,6 +34,16 @@ const sidebars = {
       ],
     },
     {
+      type: 'category',
+      label: 'HITRIX V2 (SQL Server)',
+      collapsed: false,
+      items: [
+        { type: 'doc', id: 'v2/v2-overview',       label: 'System Overview' },
+        { type: 'doc', id: 'v2/v2-data-model',     label: 'Data Model (ER)' },
+        { type: 'doc', id: 'v2/v2-migration-plan', label: 'Migration Plan → DhanMan' },
+      ],
+    },
+    {
       type: 'doc',
       id: 'feature-inventory',
       label: '📋 Feature Inventory (146 features)',
