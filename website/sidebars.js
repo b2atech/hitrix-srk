@@ -46,8 +46,10 @@ const sidebars = {
         { type: 'doc', id: 'v2/v2-purchase',        label: '05 - Purchase' },
         { type: 'doc', id: 'v2/v2-finance',         label: '06 - Finance & Accounting' },
         { type: 'doc', id: 'v2/v2-gst',            label: '07 - GST Compliance' },
-        { type: 'doc', id: 'v2/v2-reporting',       label: '08 - Reporting & Stored Procedures' },
-        { type: 'doc', id: 'v2/v2-migration-plan',  label: '10 - Migration Plan to DhanMan' },
+        { type: 'doc', id: 'v2/v2-reporting',            label: '08 - Reporting & Stored Procedures' },
+        { type: 'doc', id: 'v2/v2-bank-reconciliation', label: '09 - Bank Reconciliation' },
+        { type: 'doc', id: 'v2/v2-whatsapp',            label: '10 - WhatsApp Integration' },
+        { type: 'doc', id: 'v2/v2-migration-plan',      label: '11 - Migration Plan to DhanMan' },
       ],
     },
     {
