@@ -1,0 +1,276 @@
+
+; WORDPAD.INF
+;
+; This is the Setup information file to install WordPad
+; as an Optional Component.
+;
+; Copyright (c) 1993-1995 Microsoft Corporation
+;
+
+[version]
+LayoutFile= Layout.inf, Layout1.inf, Layout2.inf
+signature="$CHICAGO$"
+SetupClass=BASE
+
+;Destination Directories for CopyFiles Sections
+[DestinationDirs]
+WordPadCopyFiles       = 28710             ; LDID_APPS\Program Files\Accessories
+WordPadDelFiles        = 28710             ; LDID_APPS\Program Files\Accessories
+WordPadCopyConverters  = 28740,%TEXTCONV%  ; LDID_APPS\Program Files\Common Files\Microsoft Shared\Textconv
+WordPadCopyFiles_HELP  = 18                      ; LDID_HELP
+mfcdllsx.files         = 11                      ; LDID_SYS
+WordPad.Win.Del        = 25                      ; LDID_SHARED
+Register_WordPad.Copy  = 17                      ; LDID_INF
+Write.copy             = 25                      ; LDID_SHARED
+
+[BaseWinOptions]
+Register_WordPad
+
+[Register_WordPad]
+AddReg=Register_WordPad.AddReg
+CopyFiles=Register_WordPad.Copy
+
+[Register_WordPad.Copy]
+wordpad.inf
+
+[Register_WordPad.AddReg]
+;Registers WordPad so it shows up in Maint Mode Setup, set initial status to uninstalled:
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\OptionalComponents,"WordPad",,"wordpad"
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\OptionalComponents\wordpad,INF,,"wordpad.inf"
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\OptionalComponents\wordpad,Section,,"mswordpad"
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\OptionalComponents\wordpad,Installed,,"0"
+; Set up text coverter string needed by Word 97
+HKLM,"Software\Microsoft\Shared Tools Location","%TEXTCONV%",2,"%24%\%TEXTCONV_DIR%"
+
+[Optional Components]
+MSWordPad
+
+[MSWordPad]
+CopyFiles      = WordPadCopyFiles, WordPadCopyConverters, WordPadCopyFiles_HELP, mfcdllsx.files, Write.copy
+UpdateInis     = WordPadInis
+AddReg         = WordPadReg, WordPad.install.reg, mfcdllsx.register
+DelReg         = WordPadDelReg
+Delfiles       = WordPad.Win.Del,WordPadDelFiles
+
+OptionDesc     = %MSWORDPADOPT_DESC%
+Tip            = %MSWORDPADOPT_TIP%
+Parent         = AccessTop
+InstallType    = 14  ; Typical, Custom, Portable.
+IconIndex      = 39  ; Windows Logo mini-icon for dialogs
+Uninstall      = MSWordPad_remove
+PerUserInstall = MSWordPad.pui
+
+[test]
+AddReg         = WordPadReg
+
+[MSWordPad_remove]
+; note that if you install any shared MFC DLL's, you should NOT delete them when
+; uninstalling WordPad
+DelFiles       = WordPadCopyFiles, WordPadCopyConverters, WordPadCopyFiles_HELP, Write.copy
+UpdateInis     = WordPadInis.remove
+AddReg         = WordPad.remove.reg
+DelReg         = WordPadReg
+PerUserInstall = MSWordPad.remove.pui
+
+;List of files to copy to the \program files\accessories directory goes here:
+;(need to make sure the wpc files are hidden in the AddReg section below)
+[WordPadCopyFiles]
+wordpad.exe
+
+[WordPadCopyConverters]
+msconv97.dll
+mswrd632.wpc
+mswrd832.cnv
+write32.wpc
+
+[WordPadDelFiles]
+mswd6_32.wpc
+write32.wpc
+  ; delete misplaced converter files from previous builds
+msconv97.dll
+mswrd632.wpc
+mswrd832.cnv
+
+[WordPadCopyFiles_HELP]
+WORDPAD.HLP
+WORDPAD.CNT
+
+;list of files to copy to the \windows\system directory goes here:
+[mfcdllsx.files]
+mfc30.dll
+mfcans32.dll,,,32       ;32 flag suppresses ver conflict dlg
+mfco30.dll,,,32
+mfcd30.dll,,,32
+mfcn30.dll,,,32         ; new one added with mfc 3.01 version
+mfcuia32.dll
+mfc42.dll,,,32
+riched32.dll,,,32
+riched20.dll,,,32
+riched.dll,,,32
+
+[mfcdllsx.register]
+;Register shared DLLs:
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\SharedDLLs,%11%\mfc30.dll,1,01,00,00,00
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\SharedDLLs,%11%\mfcans32.dll,1,01,00,00,00
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\SharedDLLs,%11%\mfco30.dll,1,01,00,00,00
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\SharedDLLs,%11%\mfcd30.dll,1,01,00,00,00
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\SharedDLLs,%11%\mfcn30.dll,1,01,00,00,00
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\SharedDLLs,%11%\mfcuia32.dll,1,01,00,00,00
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\SharedDLLs,%11%\mfc42.dll,1,01,00,00,00
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\SharedDLLs,%11%\riched32.dll,1,01,00,00,00
+
+[WordPad.Win.Del]
+writwin.wpc     ; 16 bit write converter
+msword6.wpc     ; 16 bit winword 6 converter
+mfcoleui.dll    ; 16 bit mfc file
+mswd6_32.wpc    ; review - no longer in Windows dir
+wordpad.exe     ; review - no longer in Windows dir
+write32.wpc     ; review - no longer in Windows dir
+
+[Write.copy]
+;copy stub program that launches wordpad.exe to the Windows Dir (for compat. reasons):
+write.exe
+
+[MSWordPad.pui]
+GUID = "PerUser_MSWordPad_Inis"
+DisplayName = %PUI_DESC_WORDPAD%
+Version = %PUI_VERSION%
+IsInstalled = 1
+StubPath = "rundll.exe %11%\setupx.dll,InstallHinfSection PerUser_MSWordPad_Inis 64 %17%\wordpad.inf"
+DontAsk = 2
+
+[PerUser_MSWordPad_Inis]
+UpdateInis  = WordPadInis
+
+[MSWordPad.remove.pui]
+GUID = "PerUser_MSWordPad_Inis"
+IsInstalled = 0
+StubPath = "rundll.exe %11%\setupx.dll,InstallHinfSection PerUser_MSWordPad_Inis_remove 64 %17%\wordpad.inf"
+
+[PerUser_MSWordPad_Inis_remove]
+UpdateInis  = WordPadInis.remove
+
+[WordPadInis]
+setup.ini, progman.groups,, "group4=%APPS_DESC%"                ;creates Accessories folder (if not already there
+setup.ini, group4,, """%WORDPAD_LINK%"", ""%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE"""   ;creates link in Accessories folder
+
+[WordPadInis.remove]
+setup.ini, progman.groups,, "group4=%APPS_DESC%"     ;creates Accessories folder (if not already there
+setup.ini, group4,, """%WORDPAD_LINK%"""             ;deletes link
+
+[WordPad.install.reg]
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\OptionalComponents\wordpad,Installed,,"1"
+
+[WordPad.remove.reg]
+; sets status for Maint Mode Setup to 'not installed'
+HKLM,SOFTWARE\Microsoft\Windows\CurrentVersion\Setup\OptionalComponents\wordpad,Installed,,"0"
+
+[WordPadReg]
+; Next line is in shell.inx to avoid overwriting key when making null file entry
+;HKCR,.doc,,2,Wordpad.Document.1
+
+HKCR,Wordpad.Document.1,,,%WORDPAD_DOC%
+HKCR,Wordpad.Document.1\Insertable,,,""
+HKCR,Wordpad.Document.1\Protocol,,,
+HKCR,Wordpad.Document.1\Protocol\StdFileEditing,,,
+HKCR,Wordpad.Document.1\Protocol\StdFileEditing\Server,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE"
+HKCR,Wordpad.Document.1\Protocol\StdFileEditing\Verb,,,
+HKCR,Wordpad.Document.1\Protocol\StdFileEditing\Verb\0,,,"%EDIT%"
+HKCR,Wordpad.Document.1\DefaultIcon,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE,1"
+HKCR,Wordpad.Document.1\shell\open\command,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE ""%%1"""
+HKCR,Wordpad.Document.1\shell\print\command,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE /p ""%%1"""
+HKCR,Wordpad.Document.1\shell\printto\command,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE /pt ""%%1"" ""%%2"" ""%%3"" ""%%4"" "
+HKCR,Wordpad.Document.1\CLSID,,,{73FDDC80-AEA9-101A-98A7-00AA00374959}
+
+HKCR,rtffile,,,%RTF_DOC%
+HKCR,rtffile\DefaultIcon,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE,1"
+HKCR,rtffile\shell\open\command,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE ""%%1"""
+HKCR,rtffile\shell\print\command,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE /p ""%%1"""
+HKCR,rtffile\shell\printto\command,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE /pt ""%%1"" ""%%2"" ""%%3"" ""%%4"" "
+HKCR,rtffile\CLSID,,,{73FDDC80-AEA9-101A-98A7-00AA00374959}
+
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\DefaultIcon,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE,0"
+
+; update 3.x write stuff to use wordpad as server
+HKCR,.wri,,,wrifile
+HKCR,wrifile,,,%WRITE_DOC%
+HKCR,wrifile\DefaultIcon,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE,2"
+HKCR,wrifile\CLSID,,,{73FDDC80-AEA9-101A-98A7-00AA00374959}
+HKCR,wrifile\shell\open\command,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE ""%%1"""
+HKCR,wrifile\shell\print\command,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE /p ""%%1"""
+HKCR,wrifile\shell\printto\command,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE /pt ""%%1"" ""%%2"" ""%%3"" ""%%4"" "
+
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959},,,%WORDPAD_DOC%
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\DefaultIcon,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE,1"
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\LocalServer32,,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE"
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\ProgId,,,WordPad.Document.1
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\MiscStatus,,,0
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\AuxUserType\3,,,"%WORDPAD_LINK%"
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\AuxUserType\2,,,"%WORDPAD_DOC%"
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\Insertable,,,
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\verb\1,,,"%OPEN%,0,2"
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\verb\0,,,"%EDIT%,0,2"
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\InprocHandler32,,,ole32.dll
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\DataFormats\PriorityCacheFormats,"Rich Text Format",,""
+
+;
+; register converters
+;
+HKLM,"SOFTWARE\Microsoft\Shared Tools\Text Converters\Import\MSWord6.wpc","Name",,"%CNV_WORD6_DESC%"
+HKLM,"SOFTWARE\Microsoft\Shared Tools\Text Converters\Import\MSWord6.wpc","Path",,"%24%\%Program_Files%\%COMMON_FILES_LFN%\%MS_SHARED_LFN%\%TEXTCONV%\mswrd632.wpc"
+HKLM,"SOFTWARE\Microsoft\Shared Tools\Text Converters\Import\MSWord6.wpc","Extensions",,"doc"
+
+HKLM,"SOFTWARE\Microsoft\Shared Tools\Text Converters\Import\MSWord8","Name",,"%CNV_WORD8_DESC%"
+HKLM,"SOFTWARE\Microsoft\Shared Tools\Text Converters\Import\MSWord8","Path",,"%24%\%Program_Files%\%COMMON_FILES_LFN%\%MS_SHARED_LFN%\%TEXTCONV%\mswrd832.cnv"
+HKLM,"SOFTWARE\Microsoft\Shared Tools\Text Converters\Import\MSWord8","Extensions",,"doc"
+
+HKLM,"SOFTWARE\Microsoft\Shared Tools\Text Converters\Import\MSWord8\NoDialogs",,,""
+
+HKLM,"SOFTWARE\Microsoft\Shared Tools\Text Converters\Import\MSWinWrite.wpc","Name",,"%CNV_WRITE_DESC%"
+HKLM,"SOFTWARE\Microsoft\Shared Tools\Text Converters\Import\MSWinWrite.wpc","Path",,"%24%\%Program_Files%\%COMMON_FILES_LFN%\%MS_SHARED_LFN%\%TEXTCONV%\write32.wpc"
+HKLM,"SOFTWARE\Microsoft\Shared Tools\Text Converters\Import\MSWinWrite.wpc","Extensions",,"wri"
+
+; set up the per-app path
+HKLM,"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\WORDPAD.EXE",,,"%24%\%PROGRAMF%\%ACCESSOR%\WORDPAD.EXE"
+
+[WordPadDelReg]
+HKCR,Write.Document,,,%WRITE_DOC%
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\LocalServer
+HKCR,CLSID\{73FDDC80-AEA9-101A-98A7-00AA00374959}\InprocHandler
+HKCR,Wordpad.Document
+
+; User-visible strings
+[Strings]
+APPS_DESC       = "Accessories"
+WORDPAD_LINK    = "WordPad"
+WORDPAD_DOC     = "WordPad Document"
+WORD_DOC        = "Microsoft Word Document"
+RTF_DOC         = "Rich Text Document"
+WRITE_DOC       = "Write Document"
+MSWORDPADOPT_DESC = "WordPad"
+MSWORDPADOPT_TIP  = "Edits short memos and documents."
+EDIT            = "&Edit"
+OPEN            = "&Open"
+
+CNV_WRITE_DESC  = "Windows Write"
+CNV_WORD8_DESC  = "Word 97"
+CNV_WORD6_DESC  = "Word 6.0/95 for Windows&Macintosh"
+
+; Directory names - note that that short versions must match the truncated
+; 8 char names for the long versions, or else there will be problems.
+; also need to put the short versions in the [DestinationDirs] section above
+; Used by wordpad, hypertrm, backup, paint, & MSN
+Program_Files    = "Program Files"
+PROGRAMF         = "Progra~1"          ; first 6 chars of Program_Files, + "~1"
+ACCESSOR         = "Access~1"          ; first 6 chars of Accessories, + "~1"
+
+COMMON_FILES     = "Common~1"
+COMMON_FILES_LFN = "Common Files"
+MS_SHARED        = "Micros~1"
+MS_SHARED_LFN    = "Microsoft Shared"
+TEXTCONV         = "TextConv"
+
+TEXTCONV_DIR     = "Program Files\Common Files\Microsoft Shared\Textconv"
+
+PUI_VERSION      = "4,10,1,1"
+PUI_DESC_WORDPAD = "Windows Setup - Wordpad"

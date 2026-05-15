@@ -1,0 +1,2 @@
+update tblvoucher set CrDrNoteNo =(select vno from tblintSale  where tblintSale.CrDrNoteNo =tblvoucher.CrDrNoteNo )
+update tblIntSale set CrDrNoteNo = VNo 

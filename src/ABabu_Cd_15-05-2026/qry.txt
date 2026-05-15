@@ -1,0 +1,26 @@
+USE [Vishnu]
+GO
+
+/****** Object:  View [dbo].[qryBookingMillHelp]    Script Date: 26/05/2017 11:36:15 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+CREATE VIEW [dbo].[qryBookingMillHelp]
+AS
+SELECT        dbo.tblBooking.VNo,dbo.tblMastAccount.AcOurCode AS PartyCode,dbo.tblMastAccount.AcName AS Party, dbo.tblBooking.Vdt, tblMastAccount_2.AcOurCode AS MillCode,tblMastAccount_2.AcName AS Mill,dbo.tblBooking.VFirm,dbo.tblBooking.VType,dbo.tblBooking.VYear
+FROM            dbo.tblBooking INNER JOIN
+                         dbo.tblMastAccount ON dbo.tblBooking.BkParty = dbo.tblMastAccount.AcCode INNER JOIN
+                         dbo.tblMastAccount AS tblMastAccount_2 ON dbo.tblBooking.BkMillCode = tblMastAccount_2.AcCode
+where dbo.tblBooking.BkSrNo = 1 
+
+GO
+
+

@@ -1,0 +1,1142 @@
+VERSION 5.00
+Object = "{5E9E78A0-531B-11CF-91F6-C2863C385E30}#1.0#0"; "MSFLXGRD.OCX"
+Object = "{C932BA88-4374-101B-A56C-00AA003668DC}#1.1#0"; "MSMASK32.OCX"
+Begin VB.Form frmGPDeliveryEntry 
+   BackColor       =   &H00C2E3FC&
+   BorderStyle     =   0  'None
+   Caption         =   "Goods Inward"
+   ClientHeight    =   5790
+   ClientLeft      =   0
+   ClientTop       =   15
+   ClientWidth     =   9960
+   FillColor       =   &H000040C0&
+   FillStyle       =   0  'Solid
+   Icon            =   "frmGPDeliveryEntry.frx":0000
+   KeyPreview      =   -1  'True
+   LinkTopic       =   "Form1"
+   LockControls    =   -1  'True
+   MaxButton       =   0   'False
+   MDIChild        =   -1  'True
+   MinButton       =   0   'False
+   ScaleHeight     =   5790
+   ScaleWidth      =   9960
+   ShowInTaskbar   =   0   'False
+   Begin VB.TextBox txt 
+      Alignment       =   1  'Right Justify
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   375
+      Index           =   0
+      Left            =   2145
+      TabIndex        =   1
+      Text            =   "0"
+      ToolTipText     =   "Press F3 for Creation"
+      Top             =   840
+      Width           =   1230
+   End
+   Begin VB.TextBox txttmpBag 
+      Alignment       =   1  'Right Justify
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   375
+      Left            =   2145
+      MaxLength       =   40
+      TabIndex        =   9
+      Text            =   "txttmpBag"
+      Top             =   2655
+      Width           =   1395
+   End
+   Begin VB.TextBox txt 
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   375
+      Index           =   2
+      Left            =   2145
+      TabIndex        =   7
+      Text            =   "2"
+      ToolTipText     =   "Press F3 for Creation"
+      Top             =   2190
+      Width           =   2895
+   End
+   Begin VB.TextBox txt 
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   375
+      Index           =   1
+      Left            =   2145
+      TabIndex        =   5
+      Text            =   "1"
+      ToolTipText     =   "Press F3 for Creation"
+      Top             =   1755
+      Width           =   2895
+   End
+   Begin VB.CommandButton cmdBtn 
+      Cancel          =   -1  'True
+      Caption         =   "E&xit"
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   400
+      Index           =   10
+      Left            =   8535
+      Style           =   1  'Graphical
+      TabIndex        =   13
+      ToolTipText     =   "Exit"
+      Top             =   3585
+      Width           =   1095
+   End
+   Begin VB.CommandButton cmdBtn 
+      Caption         =   "&Save"
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   400
+      Index           =   13
+      Left            =   8535
+      Style           =   1  'Graphical
+      TabIndex        =   12
+      ToolTipText     =   "To Save Record"
+      Top             =   3075
+      Width           =   1095
+   End
+   Begin VB.TextBox txtGrid 
+      BorderStyle     =   0  'None
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   300
+      Left            =   5355
+      TabIndex        =   11
+      Top             =   885
+      Visible         =   0   'False
+      Width           =   1035
+   End
+   Begin VB.CommandButton cmdBtn 
+      Caption         =   "Optional"
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   400
+      Index           =   12
+      Left            =   8550
+      Style           =   1  'Graphical
+      TabIndex        =   15
+      Top             =   8055
+      Visible         =   0   'False
+      Width           =   1095
+   End
+   Begin VB.CommandButton cmdBtn 
+      Caption         =   "&Label"
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   400
+      Index           =   11
+      Left            =   9315
+      Style           =   1  'Graphical
+      TabIndex        =   14
+      ToolTipText     =   "To Add New Record"
+      Top             =   7980
+      Visible         =   0   'False
+      Width           =   1095
+   End
+   Begin MSFlexGridLib.MSFlexGrid msGrid 
+      Height          =   4935
+      Left            =   5220
+      TabIndex        =   10
+      Top             =   585
+      Width           =   3075
+      _ExtentX        =   5424
+      _ExtentY        =   8705
+      _Version        =   393216
+      FixedCols       =   0
+      RowHeightMin    =   275
+      BackColorFixed  =   -2147483647
+      ForeColorFixed  =   -2147483634
+      BackColorBkg    =   12632256
+      Appearance      =   0
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+   End
+   Begin MSMask.MaskEdBox mskDt 
+      Height          =   375
+      Index           =   0
+      Left            =   2145
+      TabIndex        =   3
+      Top             =   1305
+      Width           =   1230
+      _ExtentX        =   2170
+      _ExtentY        =   661
+      _Version        =   393216
+      MaxLength       =   10
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Format          =   "dd/mm/yyyy"
+      Mask            =   "##/##/####"
+      PromptChar      =   "_"
+   End
+   Begin VB.Image Image1 
+      Height          =   1620
+      Left            =   8385
+      Picture         =   "frmGPDeliveryEntry.frx":058A
+      Stretch         =   -1  'True
+      Top             =   765
+      Width           =   1335
+   End
+   Begin VB.Label Label4 
+      BackStyle       =   0  'Transparent
+      Caption         =   "&Gate Pass No   :  "
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000080&
+      Height          =   375
+      Left            =   540
+      TabIndex        =   0
+      Top             =   840
+      Width           =   1635
+   End
+   Begin VB.Label lbl1 
+      BackStyle       =   0  'Transparent
+      Caption         =   "&Bags                :"
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000080&
+      Height          =   375
+      Index           =   0
+      Left            =   540
+      TabIndex        =   8
+      Top             =   2655
+      Width           =   1650
+   End
+   Begin VB.Label Label2 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Si&zer               :"
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000080&
+      Height          =   375
+      Left            =   540
+      TabIndex        =   6
+      Top             =   2190
+      Width           =   1590
+   End
+   Begin VB.Label Label1 
+      BackStyle       =   0  'Transparent
+      Caption         =   "&Vehicle No      :  "
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000080&
+      Height          =   375
+      Left            =   540
+      TabIndex        =   4
+      Top             =   1740
+      Width           =   1635
+   End
+   Begin VB.Label lbl1 
+      BackStyle       =   0  'Transparent
+      Caption         =   "&Delivery Date  :"
+      BeginProperty Font 
+         Name            =   "Arial"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000080&
+      Height          =   255
+      Index           =   10
+      Left            =   540
+      TabIndex        =   2
+      Top             =   1305
+      Width           =   1515
+   End
+   Begin VB.Shape Shape1 
+      FillColor       =   &H00BDDFD1&
+      FillStyle       =   0  'Solid
+      Height          =   1620
+      Left            =   8400
+      Shape           =   4  'Rounded Rectangle
+      Top             =   2685
+      Width           =   1350
+   End
+   Begin VB.Shape Shape5 
+      BorderColor     =   &H00C00000&
+      BorderWidth     =   5
+      FillColor       =   &H00C00000&
+      Height          =   6210
+      Left            =   0
+      Top             =   -15
+      Width           =   9960
+   End
+   Begin VB.Shape Shape3 
+      BorderColor     =   &H00C00000&
+      FillColor       =   &H00C00000&
+      FillStyle       =   0  'Solid
+      Height          =   1770
+      Left            =   30
+      Top             =   5730
+      Width           =   10935
+   End
+   Begin VB.Label lblActionStatus 
+      Alignment       =   1  'Right Justify
+      BackStyle       =   0  'Transparent
+      Caption         =   "View Record.."
+      BeginProperty Font 
+         Name            =   "Times New Roman"
+         Size            =   15.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   -1  'True
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H0000FFFF&
+      Height          =   495
+      Left            =   7290
+      TabIndex        =   26
+      Top             =   15
+      Width           =   2475
+   End
+   Begin VB.Label Label27 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Landing Cost Per Bag"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000080&
+      Height          =   735
+      Left            =   12255
+      TabIndex        =   25
+      Top             =   7800
+      Width           =   975
+   End
+   Begin VB.Label Label26 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Landing Cost"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000080&
+      Height          =   255
+      Left            =   12375
+      TabIndex        =   24
+      Top             =   8160
+      Width           =   1455
+   End
+   Begin VB.Label Label25 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Other Less"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000080&
+      Height          =   255
+      Left            =   11415
+      TabIndex        =   23
+      Top             =   8280
+      Width           =   1215
+   End
+   Begin VB.Label Label24 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Other Add"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000080&
+      Height          =   255
+      Left            =   11295
+      TabIndex        =   22
+      Top             =   7920
+      Width           =   1095
+   End
+   Begin VB.Label Label22 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Godown Rent"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000080&
+      Height          =   255
+      Left            =   11175
+      TabIndex        =   21
+      Top             =   8160
+      Width           =   1575
+   End
+   Begin VB.Label Label21 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Freight"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000080&
+      Height          =   255
+      Left            =   11175
+      TabIndex        =   20
+      Top             =   8040
+      Width           =   1335
+   End
+   Begin VB.Label Label20 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Total Amount"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000080&
+      Height          =   255
+      Left            =   11415
+      TabIndex        =   19
+      Top             =   7860
+      Width           =   1455
+   End
+   Begin VB.Label Label19 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Landing Cost Details :-"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   12
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H000000C0&
+      Height          =   375
+      Left            =   11175
+      TabIndex        =   18
+      Top             =   7590
+      Width           =   3135
+   End
+   Begin VB.Label Label13 
+      BackStyle       =   0  'Transparent
+      Caption         =   "Ass.Value"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00000080&
+      Height          =   255
+      Left            =   11055
+      TabIndex        =   17
+      Top             =   8160
+      Width           =   1095
+   End
+   Begin VB.Label Label6 
+      BackColor       =   &H00C00000&
+      Caption         =   " Gate Pass Delivery Entry"
+      BeginProperty Font 
+         Name            =   "Times New Roman"
+         Size            =   15.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      ForeColor       =   &H00FFFFFF&
+      Height          =   390
+      Left            =   45
+      TabIndex        =   16
+      Top             =   0
+      Width           =   10815
+   End
+   Begin VB.Shape Shape2 
+      BorderColor     =   &H00000080&
+      FillColor       =   &H00EDFDFE&
+      FillStyle       =   0  'Solid
+      Height          =   4890
+      Left            =   270
+      Top             =   600
+      Width           =   4920
+   End
+End
+Attribute VB_Name = "frmGPDeliveryEntry"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
+Option Explicit
+'Dim rstbl As Recordset
+Dim rstblSub As Recordset
+Dim FirstTimeFlag As Boolean
+Dim oldFrmTypeStr As String
+Dim tmpBagNo As String
+Dim i As Long
+
+Private Sub cmdBtn_Click(Index As Integer)
+On Error GoTo ErrorRoutine
+Dim x As String
+Select Case Index
+Case 10 'Exit
+    Unload Me
+Case 13 'Save
+    If txtGrid.Visible = True Then msGrid.Text = txtGrid
+    txtGrid = ""
+    If ValidateData = True Then
+        txtGrid.Visible = False
+        SaveRelatedRecord
+        Unload Me
+    End If
+End Select
+Exit Sub
+ErrorRoutine:
+    'rstbl.CancelUpdate
+    GProcErrorHandler
+End Sub
+Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
+    Select Case KeyCode
+        Case 13:
+           If Me.ActiveControl.Name <> "txtGrid" Then SendKeys "{TAB}"
+        Case 27:
+            If (cmdBtn(13).Enabled = False) Then
+                Unload Me
+            End If
+    End Select
+End Sub
+Private Sub Form_Load()
+    Me.Top = 300
+    Me.Left = Screen.Width / 2 - Me.Width / 2
+    FirstTimeFlag = True
+    txttmpBag.Enabled = False '-Bags Total
+    '---Grid
+    SetGrid
+    Call GProcClearForm(Me, rstblSub, 0, False)
+    If FirstTimeFlag = True Then
+        FirstTimeFlag = False
+    Else
+        txt(0).SetFocus
+    End If
+End Sub
+Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
+'If rstbl.State = adStateOpen Then rstbl.Close
+If rstblSub.State = adStateOpen Then rstblSub.Close
+End Sub
+
+Private Sub mskDt_LostFocus(Index As Integer)
+SaveBtnEd
+If IsDate(mskDt(Index)) = False Then mskDt(Index) = "__/__/____"
+End Sub
+Private Sub mskDt_GotFocus(Index As Integer)
+GProcSelectBox Me.ActiveControl
+End Sub
+Private Sub SaveBtnEd()
+'--GP No
+If txt(0) = 0 Then
+    cmdBtn(13).Enabled = False
+    cmdBtn(13).BackColor = &H80000004
+Else
+    cmdBtn(13).Enabled = True
+    cmdBtn(13).BackColor = &HFFFF80
+End If
+End Sub
+
+Private Function ValidateData() As Boolean
+'---- Required Data
+'--- Validate Grid
+If ValidateGrid = False Then Exit Function
+'--G P Vno
+If GProcGetColumnValue("tblAddLess", "Vno", txt(0), "N", "Vno", "N", "vtype='GP' and Vyear=" & gCYear) = 0 Then
+    MsgBox "Check Gate Pass No.", vbInformation + vbOKOnly, Me.Caption
+    txt(0).SetFocus
+    Exit Function
+End If
+''--- Delivery dt
+'If IsDate(mskDt(0)) = False Then
+'    MsgBox "Check Delivery Date.", vbInformation + vbOKOnly, Me.Caption
+'    mskDt(0).SetFocus
+'    Exit Function
+'End If
+ValidateData = True
+End Function
+Private Sub txt_GotFocus(Index As Integer)
+GProcSelectBox Me.ActiveControl
+End Sub
+Private Sub txt_KeyDown(Index As Integer, KeyCode As Integer, Shift As Integer)
+If KeyCode = vbKeyF3 Then
+    Select Case Index
+        Case 2 '-- Sizer
+            oldFrmTypeStr = gfrmTypeStr
+            gfrmTypeStr = "S"
+            GProcShowForm frmMastNarration, frmMain.mnuMstfrm(9), "S"
+            gfrmTypeStr = oldFrmTypeStr
+    End Select
+End If
+End Sub
+Private Sub txt_KeyPress(Index As Integer, KeyAscii As Integer)
+Dim LeftPos As Long
+Dim TopPos As Long
+TopPos = txt(Index).Top + Me.Top + 650
+LeftPos = txt(Index).Left + Me.Left
+If KeyAscii = 13 Then Exit Sub
+Select Case Index
+    Case 2 '--Sizer
+        gClsSearch.SearchMultiField "tblMastNarration", "Narration", Array("Sizer"), Array(txt(Index).Width), " NarrType='S' ", Chr(KeyAscii), "Narration", LeftPos, TopPos
+        KeyAscii = 0
+        If gClsSearch.SearchMultiRetCol(0) <> "" Then txt(Index) = gClsSearch.SearchMultiRetCol(0)
+End Select
+End Sub
+Private Sub txt_LostFocus(Index As Integer)
+SaveBtnEd
+If Index = 0 Then FillRelatedRecord
+End Sub
+Private Sub SetGrid()
+Dim x As String
+Dim RCount As Integer
+Dim RsGp As Recordset
+Dim RowIndex As Integer
+Dim ColIndex As Integer
+txttmpBag = "0"
+tmpBagNo = "" ''-Auto Bag No
+'--Fill Gp Details
+x = "select VSubBag,AdLrDt,AdTransport,AdTmp5 from tblvousub,TblAddLess  where " _
+& " tblvousub.Vno=TblAddLess.Vno and tblvousub.Vtype=TblAddLess.Vtype and tblvousub.VYear=TblAddLess.Vyear and " _
+& " tblvousub.Vno=" & txt(0) & " and tblvousub.vtype='GP' and tblvousub.VYear=" & gCYear
+Set RsGp = New Recordset
+    If GProcRstOpen(RsGp, x, "R") > 0 Then
+        With RsGp
+            txttmpBag = .Fields("VSubBag") '-G P Bags
+            If IsDate(.Fields("AdLrDt")) = True Then  '-Delivery Dt
+                mskDt(0) = CDate(.Fields("AdLrDt"))
+            Else
+                mskDt(0) = "__/__/____"
+            End If
+            txt(1) = .Fields("AdTransport") & vbNullString '-Vehicle No
+            txt(2) = .Fields("AdTmp5") & vbNullString  '-Sizer
+        End With
+    End If
+txttmpBag = Format(txttmpBag, PStr)
+'--BagNo,cone,Wt,InwNo,InwType,GpNo,GpType
+x = "select BagNo,Sno from tblBags where InwType is null and InwNo=0 and GPNo=" & txt(0) & " and GpType='GP' order by BagNo"
+Set rstblSub = New Recordset
+RCount = GProcRstOpen(rstblSub, x, "R")
+With msGrid
+    .Clear
+    .FormatString = "<Bag No.                 |SNo"
+    .ColWidth(1) = 0 '-S No
+    If CLng(RCount) > CLng(txttmpBag) Then '--No Of Rows = No. Of Bags
+        .Rows = RCount + 1
+    Else
+        .Rows = txttmpBag + 1
+    End If
+End With
+'-- Fill Record
+With rstblSub
+    If Not .EOF Then
+        .MoveFirst
+        RowIndex = 1
+        Do While Not .EOF
+            For ColIndex = 0 To .Fields.Count - 1
+                Select Case .Fields(ColIndex).Type
+                    Case adInteger, 2, 3 '-- Integer
+                        msGrid.TextMatrix(RowIndex, ColIndex) = CLng(.Fields(ColIndex))
+                    Case adDecimal, 131, adNumeric, adDouble  '-- Double
+                        msGrid.TextMatrix(RowIndex, ColIndex) = Format(.Fields(ColIndex), GProcNumberFormat(.Fields(ColIndex).Precision, .Fields(ColIndex).NumericScale))
+                    Case Else
+                        msGrid.TextMatrix(RowIndex, ColIndex) = .Fields(ColIndex) & vbNullString
+                End Select
+            Next ColIndex
+            RowIndex = RowIndex + 1
+            .MoveNext
+           ' If Not .EOF Then msGrid.Rows = msGrid.Rows + 1
+        Loop
+    End If
+End With
+End Sub
+
+Private Sub msGrid_Click()
+On Error Resume Next
+    msGrid_EnterCell
+End Sub
+Private Sub msGrid_GotFocus()
+' cmdBtn(10).Cancel = False
+End Sub
+Private Sub msGrid_EnterCell()
+'If FormAction <> vbDataActionClose Then
+    CheckForNumberTxtGrid
+    DoEvents
+    txtGrid = ""
+    DoEvents
+    If msGrid.TextMatrix(msGrid.Row, 0) = "" And IsNumeric(tmpBagNo) = True Then msGrid.TextMatrix(msGrid.Row, 0) = tmpBagNo  ''-Auto Bag No
+    If Trim(msGrid.Text) <> "" Then txtGrid.Text = msGrid.Text
+    '--- Lock TextBox
+    With msGrid
+        Select Case .Col
+            Case Else
+                txtGrid.Locked = False
+        End Select
+    End With
+    msGrid_KeyPress (0)
+'End If
+End Sub
+Private Sub msGrid_KeyPress(KeyAscii As Integer)
+With msGrid
+    If KeyAscii = 27 Then '----Esc Key
+        KeyAscii = 0
+        txtGrid.Visible = False
+        Exit Sub
+    End If
+End With
+    '---- Navigate Row ,Col
+    If KeyAscii = 13 Then
+        KeyAscii = 0
+      With msGrid
+        If .Col = 0 Then
+            If .Row = (.Rows - 1) Then '-- Add New Row
+            Else '--Next Row
+                .Row = .Row + 1
+            End If
+            .Col = 0
+        Else    '-- Next col
+            .Col = .Col + 1
+        End If
+        End With
+    End If
+'    If KeyAscii <> 13 And KeyAscii <> 27 And .Col = 0 Then
+'        DoEvents
+'        KeyAscii = 0
+'        Pending_In
+'    End If
+'ProcSetAlignment rstblSub, msGrid.Col
+'---- Set TxtGrid
+If msGrid.Text <> "" Then txtGrid.Text = msGrid.Text
+If msGrid.Col < 1 Then
+    txtGrid.Move msGrid.CellLeft + msGrid.Left, msGrid.CellTop + msGrid.Top, msGrid.CellWidth, msGrid.CellHeight
+End If
+txtGrid.Visible = True
+txtGrid.Enabled = True
+DoEvents
+If KeyAscii <> 0 Then
+    Select Case rstblSub.Fields(msGrid.Col).Type
+        Case adChar, adVarWChar
+            txtGrid.Text = txtGrid.Text & Chr(KeyAscii)
+        Case Else
+            txtGrid.Text = Chr(GProcValidateKey(rstblSub, msGrid.Col, KeyAscii, txtGrid.Text)) 'Chr(GProcNumberWithDecimal(KeyAscii, txtGrid))
+    End Select
+End If
+DoEvents
+If msGrid.Text <> "" Then
+    txtGrid.SelStart = Len(txtGrid.Text) + 1
+Else
+    txtGrid.SelStart = 1
+End If
+DoEvents
+If txtGrid.Visible = True Then txtGrid.SetFocus
+End Sub
+Private Sub msGrid_LeaveCell()
+If txtGrid.Visible Then
+    msGrid.Text = txtGrid.Text
+    DoEvents
+    txtGrid.Text = ""
+    txtGrid.Visible = False
+    If IsNumeric(msGrid.TextMatrix(msGrid.Row, 0)) = True Then ''-Auto Bag No
+        tmpBagNo = CLng(msGrid.TextMatrix(msGrid.Row, 0)) + 1
+    Else
+        tmpBagNo = tmpBagNo
+    End If
+End If
+End Sub
+Private Sub txtGrid_GotFocus()
+    txtGrid.Alignment = ProcSetAlignment(rstblSub, msGrid.Col)
+    DoEvents
+    Call GProcSelectBox(txtGrid)
+End Sub
+
+Private Sub txtGrid_KeyPress(KeyAscii As Integer)
+Dim LeftPos As Long
+Dim TopPos As Long
+TopPos = txtGrid.Top + Me.Top + 650
+LeftPos = txtGrid.Left + Me.Left
+DoEvents
+With msGrid
+    If KeyAscii <> 13 And KeyAscii <> 27 Then
+        '--- Search
+        Select Case .Col
+            Case Else
+                KeyAscii = GProcValidateKey(rstblSub, msGrid.Col, KeyAscii, txtGrid)
+        End Select
+   End If
+    If KeyAscii = 13 Then
+  '      CheckForNumberTxtGrid
+    End If
+    '--- Navigate Row ,Col
+    If KeyAscii = 13 And .Col < 0 Then
+        .Col = .Col + 1
+        If .Col = 0 Then
+            If IsNumeric(txtGrid) = True Then '-Auto Bag No
+                tmpBagNo = CLng(txtGrid)
+            Else
+                tmpBagNo = ""
+            End If
+        End If
+    ElseIf KeyAscii = 13 And .Col = 0 Then
+        If .Row = (.Rows - 1) Then
+        Else
+            .Row = .Row + 1
+        End If
+        .Col = 0
+    End If
+    '-- On ESC
+    With msGrid
+        If KeyAscii = 27 Then '----Esc Key
+            KeyAscii = 0
+            txtGrid.Visible = False
+            Exit Sub
+        End If
+    End With
+End With
+End Sub
+Private Sub CheckForNumberGrid()
+Dim RowIndex As Long
+With rstblSub
+For RowIndex = 1 To msGrid.Rows - 1
+    For i = 0 To .Fields.Count - 1
+        Select Case .Fields(i).Type
+            Case adInteger, 2, 3 '-- Integer
+                If IsNumeric(msGrid.TextMatrix(RowIndex, i)) = False Then
+                    msGrid.TextMatrix(RowIndex, i) = 0
+                Else
+                    msGrid.TextMatrix(RowIndex, i) = CLng(msGrid.TextMatrix(RowIndex, i))
+                End If
+            Case adDecimal, 131, adNumeric, adDouble '-- Double
+                If IsNumeric(msGrid.TextMatrix(RowIndex, i)) = False Then
+                    msGrid.TextMatrix(RowIndex, i) = Format(0, GProcNumberFormat(.Fields(i).Precision, .Fields(i).NumericScale))
+                Else
+                    msGrid.TextMatrix(RowIndex, i) = Format(msGrid.TextMatrix(RowIndex, i), GProcNumberFormat(.Fields(i).Precision, .Fields(i).NumericScale))
+                End If
+            Case adChar, adVarWChar
+            Case adDate '-- Date
+                If IsDate(msGrid.TextMatrix(RowIndex, i)) = False Then
+                    msGrid.TextMatrix(RowIndex, i) = Null
+                End If
+        End Select
+    Next i
+  Next RowIndex
+End With
+End Sub
+'---  Check For Number Grid
+Private Sub CheckForNumberTxtGrid()
+With rstblSub
+    Select Case .Fields(msGrid.Col).Type
+        Case adInteger, 2, 3 '-- Integer
+            If IsNumeric(txtGrid) = False Then
+                txtGrid = 0
+            Else
+                txtGrid = CLng(txtGrid)
+            End If
+            txtGrid.MaxLength = .Fields(msGrid.Col).Precision
+        Case adDecimal, 131, adNumeric, adDouble '-- Double
+            If IsNumeric(txtGrid) = False Then
+                txtGrid = Format(0, GProcNumberFormat(.Fields(msGrid.Col).Precision, .Fields(msGrid.Col).NumericScale))
+            Else
+                txtGrid = Format(txtGrid, GProcNumberFormat(.Fields(msGrid.Col).Precision, .Fields(msGrid.Col).NumericScale))
+            End If
+            txtGrid.MaxLength = .Fields(msGrid.Col).Precision
+    '    Case adChar, adVarWChar '--String
+   '         txtGrid.MaxLength = .Fields(msGrid.Col).DefinedSize
+        Case adDate '-- Date
+            If IsDate(txtGrid) = False Then
+                txtGrid = Null
+            Else
+                txtGrid = CDate(txtGrid)
+            End If
+            txtGrid.MaxLength = 10
+         Case Else
+            txtGrid.MaxLength = .Fields(msGrid.Col).DefinedSize
+    End Select
+End With
+End Sub
+Private Function ProcSetAlignment(prstblSub As Recordset, pColIndex As Long)
+Select Case prstblSub.Fields(pColIndex).Type
+    Case adInteger, adDouble, 2, 3, 131, adDecimal
+        ProcSetAlignment = 1
+    Case Else
+        ProcSetAlignment = 0
+End Select
+End Function
+'-- Grid Required
+Private Function ValidateGrid() As Boolean
+Dim i As Long
+Dim RowIndex As Long
+If Trim(txtGrid.Text) <> "" Then msGrid.Text = txtGrid.Text
+txtGrid.Visible = False
+txtGrid.Text = ""
+CheckForNumberGrid
+With msGrid
+Validate:
+    For RowIndex = 1 To .Rows - 1
+        For i = 0 To rstblSub.Fields.Count - 1
+            Select Case i
+                Case 0 '-- Bag  No
+                    '-Bag No="" ,wt=0  and Bags row >In Bag delete row
+                    If RowIndex > 0 And Trim(.TextMatrix(RowIndex, i)) = "" And .Rows > 2 Then
+                        .RemoveItem (RowIndex)
+                        GoTo Validate
+                    End If
+            End Select
+        Next i
+      Next RowIndex
+    '--Bag Row More than GP Bags
+    If CLng(.Rows - 1) > CLng(txttmpBag) Then
+        MsgBox "Check Bag Detail.Bags " & CLng(.Rows - 1) & " more than Gate Pass Bags " & CLng(txttmpBag), vbCritical + vbOKOnly, Me.Caption
+        msGrid.SetFocus
+        Exit Function
+    End If
+End With
+ValidateGrid = True
+End Function
+Private Sub SaveRelatedRecord()
+Dim i As Long, x As String
+Dim DtStr
+'--- Save Grid Records
+CheckForNumberGrid
+
+If gBackEndDB = gBackEndAccess Then '-Delivery Dt
+    If IsDate(mskDt(0)) = False Then
+        DtStr = "Null"
+    Else
+        DtStr = "cdate('" & mskDt(0) & "')"
+    End If
+Else
+    If IsDate(mskDt(0)) = False Then
+        DtStr = "Null"
+    Else
+        DtStr = "to_date('" & mskDt(0) & "','dd/MM/yyyy')"
+    End If
+End If
+'=== Update Gate Pass (Delivery Dt,Vehicle No,Sizer)
+gCn.Execute "update tblAddLess set AdLRDt=" & DtStr & ",AdTransport='" & txt(1) & "',AdTmp5='" & txt(2) & "' where Vno=" & CLng(txt(0)) & " and Vtype='GP' and Vyear=" & gCYear
+'--- Save Grid Records To tblBags
+gCn.Execute "delete from tblBags where InwType is null  and InwNo=0 and GpNo=" & txt(0) & " and GPType='GP'"
+x = "select * from tblBags where InwType is null and InwNo=0 and GpNo=" & txt(0) & " and GPType='GP'"
+GProcRstOpen rstblSub, x, "O"
+With msGrid
+    i = 1
+    Do While i < .Rows
+        If .TextMatrix(i, 0) <> "" Then '- BagNo
+            rstblSub.AddNew
+            '-- SNo
+            If CLng(.TextMatrix(i, 1)) > 0 Then
+                rstblSub!SNo = .TextMatrix(i, 1)
+            Else
+                rstblSub!SNo = GProcGenerateId("tblBags", "SNo")
+            End If
+            rstblSub!BagNo = .TextMatrix(i, 0) '--BagNo
+            rstblSub!GpNo = CLng(txt(0))    '--GP No
+            rstblSub!GPTYPE = "GP" '-- GP Type
+            rstblSub.Update
+        End If
+        i = i + 1
+     Loop
+ End With
+ rstblSub.Close
+ End Sub
+Private Sub FillRelatedRecord()
+Dim RowIndex As Long
+Dim ColIndex As Long
+'txtGrid.Visible = False
+'--Fill Grid
+SetGrid
+With rstblSub
+    If Not .EOF Then
+        .MoveFirst
+        RowIndex = 1
+        msGrid.Rows = 2
+        Do While Not .EOF
+            For ColIndex = 0 To .Fields.Count - 1
+                Select Case .Fields(ColIndex).Type
+                    Case adInteger, 2, 3 '-- Integer
+                        msGrid.TextMatrix(RowIndex, ColIndex) = CLng(.Fields(ColIndex))
+                    Case adDecimal, 131, adNumeric, adDouble  '-- Double
+                        msGrid.TextMatrix(RowIndex, ColIndex) = Format(.Fields(ColIndex), GProcNumberFormat(.Fields(ColIndex).Precision, .Fields(ColIndex).NumericScale))
+                    Case adDate
+                        msGrid.TextMatrix(RowIndex, ColIndex) = Format(.Fields(ColIndex), "'dd/mm/yyyy")
+                    Case Else
+                        msGrid.TextMatrix(RowIndex, ColIndex) = .Fields(ColIndex) & vbNullString
+                End Select
+            Next ColIndex
+            RowIndex = RowIndex + 1
+            .MoveNext
+            If Not .EOF Then msGrid.Rows = msGrid.Rows + 1
+        Loop
+    End If
+End With
+End Sub
+'Private Sub SaveRelatedRecord()
+'Dim i As Long, X As String
+'Dim Vno As Long
+'Dim VYear As String
+'Dim Sizer As String
+'Dim VehicalNo As String
+''--- Save Grid Records
+'CheckForNumberGrid
+'With msGrid
+'    i = 1
+'    Do While i < .Rows
+'        Vno = CLng(.TextMatrix(i, 0)) '--Vno
+'        VYear = CLng(.TextMatrix(i, 6)) '--VYear
+'        VehicalNo = .TextMatrix(i, 4) '- Vehical No
+'        Sizer = .TextMatrix(i, 5) '--Sizer
+'        If VehicalNo = "" Then
+'            gCn.Execute "update tbladdless set AdTmp5='" & Sizer & "',ADTRANSPORT='" & VehicalNo & "',ADLRDT=Null where vno=" & Vno & " and Vtype='GP' and Vyear=" & VYear
+'        Else
+'            If gBackEndDB = gBackEndAccess Then
+'                gCn.Execute "update tbladdless set AdTmp5='" & Sizer & "',ADTRANSPORT='" & VehicalNo & "',ADLRDT='" & CDate(mskDt(0)) & "' where vno=" & Vno & " and Vtype='GP' and Vyear=" & VYear
+'            Else
+'                gCn.Execute "update tbladdless set AdTmp5='" & Sizer & "',ADTRANSPORT='" & VehicalNo & "',ADLRDT=to_date('" & CDate(mskDt(0)) & "','dd/MM/yyyy') where vno=" & Vno & " and Vtype='GP' and Vyear=" & VYear
+'            End If
+'        End If
+'        i = i + 1
+'     Loop
+'End With
+'End Sub
+
+

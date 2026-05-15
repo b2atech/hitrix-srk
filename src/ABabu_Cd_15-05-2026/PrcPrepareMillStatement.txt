@@ -1,0 +1,343 @@
+USE [Vishnu]
+GO
+/****** Object:  StoredProcedure [dbo].[PrcPrepareMillStatement]    Script Date: 05/06/2017 16:33:14 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER  procedure [dbo].[PrcPrepareMillStatement] (
+    @VFirm nchar(6),
+    @Fr_dt date,
+    @To_dt date,
+	@YearStart_Dt as date,
+	@MillCode nvarchar(max)=null, 
+    @CommRt nvarchar(Max)=null,
+	@CommOn nvarchar(Max)=null,
+	@SrvTxRt nvarchar(Max)=null,
+	@SWCessRt nvarchar(Max)=null,
+	@KKCessRt nvarchar(Max)=null,
+	@FreightPd nvarchar(Max)=null,
+    @Ucode nchar(20)
+	
+)
+as
+    set nocount on;
+    declare @i1 int
+    BEGIN
+        delete from TmpGentbl  where  UserName = @Ucode   ;
+    END
+     DECLARE @SQL1 nvarchar(max);  
+     declare @x nvarchar(max);	
+
+--- Brokerage
+
+Begin 
+	
+Insert into TmpGentbl (Nar6 ,VFirmName,Vfirm,Vno,MillCode,MillName,Nar5,Nar1,Amt1,Amt3,Amt4,Amt5,Amt2,Amt12,UserName) 
+
+select 'A',dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,dbo.tblMastItem.ItName,        
+	   dbo.tblMastItem.ItBrokOn ,dbo.tblMastItem.ItBrokRt,@SrvTxRt,@SWCessRt,@KKCessRt,sum(dbo.tblSaleSub.SlSubBag) ,sum(dbo.tblSaleSub.SlSubWt) , @UCODE      
+
+
+from   dbo.tblSale  
+	   inner join dbo.tblMastCompany on dbo.tblSale.VFirm = dbo.tblMastCompany.CCode   
+	   inner join dbo.tblMastAccount  tblMastAccount_Ml on dbo.tblSale.SlMillCode  = tblMastAccount_Ml.AcCode 
+	   inner join dbo.tblSaleSub  on dbo.tblSale.VNo = dbo.tblSaleSub.Vno and dbo.tblSale.VType  = dbo.tblSaleSub.VType and dbo.tblSale.VYear = dbo.tblSaleSub.VYear and dbo.tblSale.VFirm  = dbo.tblSaleSub.VFirm 
+	   inner join dbo.tblMastItem  on dbo.tblSaleSub.SlSubItCode   = dbo.tblMastItem.ItCode 
+
+where  dbo.tblSale.VDt >= @Fr_dt and  dbo.tblSale.VDt <= @To_dt and 
+       (isnull(@VFirm,'')='' or dbo.tblSale.vfirm = @VFirm) and
+	   (isnull(@MillCode,'')='' or dbo.tblSale.SlMillCode  in ( @MillCode )) and
+	   (dbo.tblSale.VType)  in ('SD','SO' )
+group by dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode ,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,dbo.tblMastItem.ItName,dbo.tblMastItem.ItBrokOn ,dbo.tblMastItem.ItBrokRt
+end
+
+---- Unloadind Debit Note
+
+Begin 
+	
+Insert into TmpGentbl (Nar6 ,VFirmName,Vfirm,Vno,MillCode,MillName,Amt2,Amt12,UserName) 
+
+select 'B',dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,        
+	   sum(dbo.tblPurchSub.PurSubBag) ,sum(dbo.tblPurchSub.PurSubWt) , @UCODE      
+
+
+from   dbo.tblPurch   
+	   inner join dbo.tblMastCompany on dbo.tblPurch.VFirm = dbo.tblMastCompany.CCode   
+	   inner join dbo.tblMastAccount  tblMastAccount_Ml on dbo.tblPurch.PurMillCode  = tblMastAccount_Ml.AcCode 
+	   inner join dbo.tblPurchSub   on dbo.tblPurch.VNo = dbo.tblPurchSub.Vno and dbo.tblPurch.VType  = dbo.tblPurchSub.VType and dbo.tblPurch.VYear = dbo.tblPurchSub.VYear and dbo.tblPurch.VFirm  = dbo.tblPurchSub.VFirm 
+	   inner join dbo.tblMastItem  on dbo.tblPurchSub.PurSubItCode  = dbo.tblMastItem.ItCode 
+
+where  dbo.tblPurch.VDt >= @Fr_dt and  dbo.tblPurch.VDt <= @To_dt and 
+       (isnull(@VFirm,'')='' or dbo.tblPurch.vfirm = @VFirm) and
+	   (isnull(@MillCode,'')='' or dbo.tblPurch.PurMillCode  in ( @MillCode )) and
+	   (dbo.tblPurch.VType) = 'PI'
+group by dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode ,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName
+end
+
+
+---- Commission Statement
+
+
+Begin 
+	
+Insert into TmpGentbl (Nar6 ,VFirmName,Vfirm,Vno ,MillCode,MillName,Amt1,Amt2,Amt3,Amt4,Amt5,Amt6,Amt7,Amt8,UserName) 
+
+select 'C',dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode ,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,sum(dbo.tblSale.SlBillAmt),sum(iif(dbo.tblMastNarration.Narration = 'V A T',dbo.tblSale.SlTaxAmt,0)),
+        @CommRt,@CommOn,@SrvTxRt,@SWCessRt,@KKCessRt,@FreightPd,@Ucode
+
+from   dbo.tblSale  
+	   inner join dbo.tblMastCompany on dbo.tblSale.VFirm = dbo.tblMastCompany.CCode   
+	   inner join dbo.tblMastAccount  tblMastAccount_Ml on dbo.tblSale.SlMillCode  = tblMastAccount_Ml.AcCode 
+	   inner join dbo.tblMastNarration   on dbo.tblSale.SlTaxCode   = dbo.tblMastNarration.NarrCode  
+
+where  dbo.tblSale.VDt >= @Fr_dt and  dbo.tblSale.VDt <= @To_dt and 
+       (isnull(@VFirm,'')='' or dbo.tblSale.vfirm = @VFirm) and
+	   (isnull(@MillCode,'')='' or dbo.tblSale.SlMillCode  in ( @MillCode )) and
+	   (dbo.tblSale.VType)  in ('SD','SO' )
+group by dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName
+
+end
+
+
+--- VAT Debit Note
+
+Begin 
+
+Insert into TmpGentbl (Nar6 ,VFirmName,Vfirm,Vno,MillCode,MillName,Nar1,Amt1,Amt2,Amt3,UserName) 
+
+select 'D',dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode ,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,        
+       dbo.tblMastNarration.Narration,dbo.tblSale.SlTaxRate ,sum(iif(dbo.tblMastNarration.Narration = 'V A T',dbo.tblSale.SlTaxableAmt,0)) ,sum(iif(dbo.tblMastNarration.Narration = 'V A T',dbo.tblSale.SlTaxAmt,0)), @UCODE      
+from   dbo.tblSale  
+	   inner join dbo.tblMastCompany on dbo.tblSale.VFirm = dbo.tblMastCompany.CCode   
+	   inner join dbo.tblMastAccount  tblMastAccount_Ml on dbo.tblSale.SlMillCode  = tblMastAccount_Ml.AcCode 
+	   inner join dbo.tblMastNarration   on dbo.tblSale.SlTaxCode   = dbo.tblMastNarration.NarrCode  
+
+where  dbo.tblSale.VDt >= @Fr_dt and  dbo.tblSale.VDt <= @To_dt and 
+       (isnull(@VFirm,'')='' or dbo.tblSale.vfirm = @VFirm) and
+	   (isnull(@MillCode,'')='' or dbo.tblSale.SlMillCode  in ( @MillCode )) and
+	   (dbo.tblSale.VType) in ('SD','SO' ) and
+	   dbo.tblMastNarration.Narration = 'V A T'
+group by dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode ,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,dbo.tblMastNarration.Narration,dbo.tblSale.SlTaxRate
+end
+
+
+----------voucher Cr Ac
+BEGIN 
+Insert into TmpGentbl (Nar6,Vtype,Vno,Vdt,Vfirm,VFirmName,MillCode,MillName,Nar1,Amt1,Nar2,UserName) 
+SELECT 'F',dbo.tblVoucher.VType, tblMastAccount_1.AcCode , dbo.tblVoucher.VDt,dbo.tblVoucher.VFirm,tblMastCompany_4.CName ,tblMastAccount_1.AcOurCode,tblMastAccount_1.AcName,iif(dbo.tblVoucher.VType = 'BP','Amount Remitted', tblMastAccount_2.AcName), dbo.tblVoucher.VAmt, ltrim(isnull(dbo.tblVoucher.VRefTp,'')+' '+isnull(dbo.tblVoucher.VRefNo,'')+' '+isnull(dbo.tblVoucher.VRefBank,'')),
+       @UCODE
+ FROM         dbo.tblVoucher INNER JOIN dbo.tblMastAccount AS tblMastAccount_2 ON dbo.tblVoucher.VDrAcCode = tblMastAccount_2.AcCode
+                             INNER JOIN dbo.tblMastAccount AS tblMastAccount_1 ON dbo.tblVoucher.VCrAcCode = tblMastAccount_1.AcCode
+                             INNER JOIN dbo.tblMastGroup ON dbo.tblmastgroup.AgCode = tblMastAccount_1.AgCode   
+                             INNER JOIN dbo.tblMastCompany as tblMastCompany_4 ON  dbo.tblVoucher.VFirm = tblMastCompany_4.CCode 
+
+WHERE  (isnull(@VFirm,'')='' or  dbo.tblVoucher.vfirm = @VFirm)  and dbo.tblVoucher.VDt >=@Fr_dt  and dbo.tblVoucher.VDt <= @To_dt
+  and  (isnull(@MillCode,'')='' or dbo.tblVoucher.VCrAcCode in ( @MillCode )) 
+  and (dbo.tblVoucher.VType <> '0P')
+END
+
+
+----------voucher Dr Ac
+BEGIN 
+Insert into TmpGentbl (Nar6,Vtype,Vno,Vdt,Vfirm,VFirmName,MillCode,MillName,Nar1,Amt2,Nar2,UserName) 
+SELECT   'F',tblVoucher_1.VType,tblMastAccount_2.AcCode, tblVoucher_1.VDt,tblVoucher_1.VFirm,tblMastCompany_5.CName,tblMastAccount_2.AcOurCode,tblMastAccount_2.AcName,iif(tblVoucher_1.VType = 'BP','Amount Remitted', tblMastAccount_1.AcName), tblVoucher_1.VAmt,ltrim(isnull(tblVoucher_1.VRefTp,'')+' '+isnull(tblVoucher_1.VRefNo,'')+' '+isnull(tblVoucher_1.VRefBank,'')), 
+         @UCODE
+FROM         dbo.tblVoucher AS tblVoucher_1 INNER JOIN dbo.tblMastAccount AS tblMastAccount_1 ON tblVoucher_1.VCrAcCode = tblMastAccount_1.AcCode
+                                            INNER JOIN dbo.tblMastAccount AS tblMastAccount_2 ON tblVoucher_1.VDrAcCode = tblMastAccount_2.AcCode
+                                            INNER JOIN dbo.tblMastGroup ON tblmastgroup.AgCode = tblMastAccount_2.AgCode   
+                                            INNER JOIN dbo.tblMastCompany as tblMastCompany_5 ON  tblVoucher_1.VFirm = tblMastCompany_5.CCode 
+
+WHERE  (isnull(@VFirm,'')='' or tblVoucher_1.vfirm = @VFirm)  and tblVoucher_1.VDt >=@Fr_dt  and tblVoucher_1.VDt <= @To_dt
+  and  (isnull(@MillCode,'')='' or tblVoucher_1.VDrAcCode in ( @MillCode )) 
+  and (tblVoucher_1.VType <> '0P')
+ORDER BY Vfirm,tblMastAccount_2.AcCode, VDt
+END
+
+----------Account Statement
+
+Begin 
+	
+Insert into TmpGentbl (Nar6 ,VFirmName,Vfirm,Vno ,MillCode,MillName,Amt1,Amt2,Amt3,Amt4,Amt5,Amt6,Amt7,Amt8,UserName) 
+
+select 'G',dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode ,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,sum(dbo.tblSale.SlBillAmt),sum(iif(dbo.tblMastNarration.Narration = 'V A T',dbo.tblSale.SlTaxAmt,0)),
+        @CommRt,@CommOn,@SrvTxRt,@SWCessRt,@KKCessRt,@FreightPd,@Ucode
+
+from   dbo.tblSale  
+	   inner join dbo.tblMastCompany on dbo.tblSale.VFirm = dbo.tblMastCompany.CCode   
+	   inner join dbo.tblMastAccount  tblMastAccount_Ml on dbo.tblSale.SlMillCode  = tblMastAccount_Ml.AcCode 
+	   inner join dbo.tblMastNarration   on dbo.tblSale.SlTaxCode   = dbo.tblMastNarration.NarrCode  
+
+where  dbo.tblSale.VDt >= @Fr_dt and  dbo.tblSale.VDt <= @To_dt and 
+       (isnull(@VFirm,'')='' or dbo.tblSale.vfirm = @VFirm) and
+	   (isnull(@MillCode,'')='' or dbo.tblSale.SlMillCode  in ( @MillCode )) and
+	   (dbo.tblSale.VType)  in ('SD','SO' )
+group by dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName
+
+end
+
+
+----------Stock Statement Pending
+-- Op. In Purch 
+Begin 
+	
+Insert into TmpGentbl (Nar6,VFirmName,Vfirm,Vno ,MillCode,MillName,Nar1,Vtype,ItCode,Nar2,Nar4,Amt1,Amt12,UserName) 
+
+select 'Op.Cal',dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,        
+	   'OpIn','0P', dbo.tblMastItem.ItCode,dbo.tblMastItem.ItName,dbo.tblMastItem.ItUnit,sum(dbo.tblPurchSub.PurSubBag) ,sum(dbo.tblPurchSub.PurSubWt),@Ucode  
+	   
+from   dbo.tblpurch inner join dbo.tblMastCompany on dbo.tblpurch.VFirm = dbo.tblMastCompany.CCode   
+	   inner join dbo.tblMastAccount  tblMastAccount_Ml on dbo.tblpurch.PurMillCode  = tblMastAccount_Ml.AcCode 
+	   inner join dbo.tblPurchSub   on dbo.tblpurch.VNo = dbo.tblPurchSub.Vno and dbo.tblpurch.VType  = dbo.tblPurchSub.VType and dbo.tblpurch.VYear = dbo.tblPurchSub.VYear and dbo.tblpurch.VFirm  = dbo.tblPurchSub.VFirm 
+	   inner join dbo.tblMastItem  on dbo.tblPurchSub.PurSubItCode  = dbo.tblMastItem.ItCode 
+
+where  (isnull(@VFirm,'')='' or dbo.tblpurch.vfirm = @VFirm) and
+	   (isnull(@MillCode,'')='' or dbo.tblpurch.PurMillCode in ( @MillCode )) and
+	   dbo.tblpurch.VType = 'OI'
+
+group by dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode ,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,dbo.tblpurch.vtype,dbo.tblMastItem.ItCode,dbo.tblMastItem.ItName,dbo.tblMastItem.ItUnit
+
+end
+
+Begin 
+	
+Insert into TmpGentbl (Nar6,VFirmName,Vfirm,Vno ,MillCode,MillName,Nar1,Vtype,ItCode,Nar2,Nar4,Amt1,Amt12,UserName) 
+
+select 'Op.Cal',dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,        
+	   'OpIn','0P', dbo.tblMastItem.ItCode,dbo.tblMastItem.ItName,dbo.tblMastItem.ItUnit,sum(dbo.tblPurchSub.PurSubBag) ,sum(dbo.tblPurchSub.PurSubWt),@Ucode  
+from   dbo.tblpurch inner join dbo.tblMastCompany on dbo.tblpurch.VFirm = dbo.tblMastCompany.CCode   
+	   inner join dbo.tblMastAccount  tblMastAccount_Ml on dbo.tblpurch.PurMillCode  = tblMastAccount_Ml.AcCode 
+	   inner join dbo.tblPurchSub   on dbo.tblpurch.VNo = dbo.tblPurchSub.Vno and dbo.tblpurch.VType  = dbo.tblPurchSub.VType and dbo.tblpurch.VYear = dbo.tblPurchSub.VYear and dbo.tblpurch.VFirm  = dbo.tblPurchSub.VFirm 
+	   inner join dbo.tblMastItem  on dbo.tblPurchSub.PurSubItCode  = dbo.tblMastItem.ItCode 
+
+where  dbo.tblpurch.VDt >= @YearStart_Dt and  dbo.tblpurch.VDt <  @Fr_dt and 
+       (isnull(@VFirm,'')='' or dbo.tblpurch.vfirm = @VFirm) and
+	   (isnull(@MillCode,'')='' or dbo.tblpurch.PurMillCode in ( @MillCode )) and
+	   dbo.tblpurch.VType in ('PI','RO')
+
+group by dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode,tblMastAccount_Ml.AcCode,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,dbo.tblpurch.vtype,dbo.tblMastItem.ItCode,dbo.tblMastItem.ItName,dbo.tblMastItem.ItUnit
+
+end
+-- Op Out Sales
+Begin 
+	
+Insert into TmpGentbl (nar6,VFirmName,Vfirm,Vno ,MillCode,MillName,Nar1,Vtype,ItCode,Nar2,Nar4,Amt2,Amt11,UserName) 
+
+select 'Op.Cal',dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode,tblMastAccount_Ml.AcCode ,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,        
+	   'OpOut','0P',dbo.tblMastItem.ItCode,dbo.tblMastItem.ItName,dbo.tblMastItem.ItUnit ,sum(dbo.tblSaleSub.SlSubBag) ,sum(dbo.tblSaleSub.SlSubWt),@Ucode  
+from   dbo.tblSale inner join dbo.tblMastCompany on dbo.tblSale.VFirm = dbo.tblMastCompany.CCode   
+	   inner join dbo.tblMastAccount  tblMastAccount_Ml on dbo.tblSale.SlMillCode  = tblMastAccount_Ml.AcCode 
+	   inner join dbo.tblSaleSub   on dbo.tblSale.VNo = dbo.tblSaleSub.Vno and dbo.tblSale.VType  = dbo.tblSaleSub.VType and dbo.tblSale.VYear = dbo.tblSaleSub.VYear and dbo.tblSale.VFirm  = dbo.tblSaleSub.VFirm 
+	   inner join dbo.tblMastItem  on dbo.tblSaleSub.SlSubItCode  = dbo.tblMastItem.ItCode 
+where  dbo.tblSale.VDt >= @YearStart_Dt and  dbo.tblSale.VDt < @Fr_dt and 
+       (isnull(@VFirm,'')='' or dbo.tblSale.vfirm = @VFirm) and
+	   (isnull(@MillCode,'')='' or dbo.tblSale.SlMillCode in ( @MillCode )) and
+	   dbo.tblSale.VType in ('SO','SD','VI')
+
+group by dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode,tblMastAccount_Ml.AcCode ,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,dbo.tblSale.vtype,dbo.tblMastItem.ItCode,dbo.tblMastItem.ItName,dbo.tblMastItem.ItUnit
+
+end
+
+--Inward
+Begin 
+	
+Insert into TmpGentbl (Nar6,VFirmName,Vfirm,Vno ,MillCode,MillName,Nar1,Vtype,ItCode,Nar2,Nar4,Amt3,Amt10,UserName) 
+
+select 'Op.Cal',dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode,tblMastAccount_Ml.AcCode ,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,        
+	   'I',dbo.tblpurch.vtype, dbo.tblMastItem.ItCode,dbo.tblMastItem.ItName,dbo.tblMastItem.ItUnit,sum(dbo.tblPurchSub.PurSubBag) ,sum(dbo.tblPurchSub.PurSubWt),@Ucode  
+from   dbo.tblpurch inner join dbo.tblMastCompany on dbo.tblpurch.VFirm = dbo.tblMastCompany.CCode   
+	   inner join dbo.tblMastAccount  tblMastAccount_Ml on dbo.tblpurch.PurMillCode  = tblMastAccount_Ml.AcCode 
+	   inner join dbo.tblPurchSub   on dbo.tblpurch.VNo = dbo.tblPurchSub.Vno and dbo.tblpurch.VType  = dbo.tblPurchSub.VType and dbo.tblpurch.VYear = dbo.tblPurchSub.VYear and dbo.tblpurch.VFirm  = dbo.tblPurchSub.VFirm 
+	   inner join dbo.tblMastItem  on dbo.tblPurchSub.PurSubItCode  = dbo.tblMastItem.ItCode 
+
+where  dbo.tblpurch.VDt >= @Fr_dt and  dbo.tblpurch.VDt <= @To_dt and 
+       (isnull(@VFirm,'')='' or dbo.tblpurch.vfirm = @VFirm) and
+	   (isnull(@MillCode,'')='' or dbo.tblpurch.PurMillCode in ( @MillCode )) and
+	   dbo.tblpurch.VType in ('PI','RO')
+
+group by dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode,tblMastAccount_Ml.AcCode ,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,dbo.tblpurch.vtype,dbo.tblMastItem.ItCode,dbo.tblMastItem.ItName,dbo.tblMastItem.ItUnit
+
+end
+
+-- Outward
+Begin 
+	
+Insert into TmpGentbl (Nar6,VFirmName,Vfirm,Vno ,MillCode,MillName,Nar1,Vtype,ItCode,Nar2,Nar4,Amt4,Amt9,UserName) 
+
+select 'Op.Cal',dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode,tblMastAccount_Ml.AcCode ,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,        
+	   'O',dbo.tblSale.vtype,dbo.tblMastItem.ItCode,dbo.tblMastItem.ItName,dbo.tblMastItem.ItUnit ,sum(dbo.tblSaleSub.SlSubBag) ,sum(dbo.tblSaleSub.SlSubWt),@Ucode  
+from   dbo.tblSale inner join dbo.tblMastCompany on dbo.tblSale.VFirm = dbo.tblMastCompany.CCode   
+	   inner join dbo.tblMastAccount  tblMastAccount_Ml on dbo.tblSale.SlMillCode  = tblMastAccount_Ml.AcCode 
+	   inner join dbo.tblSaleSub   on dbo.tblSale.VNo = dbo.tblSaleSub.Vno and dbo.tblSale.VType  = dbo.tblSaleSub.VType and dbo.tblSale.VYear = dbo.tblSaleSub.VYear and dbo.tblSale.VFirm  = dbo.tblSaleSub.VFirm 
+	   inner join dbo.tblMastItem  on dbo.tblSaleSub.SlSubItCode  = dbo.tblMastItem.ItCode 
+where  dbo.tblSale.VDt >= @Fr_dt and  dbo.tblSale.VDt <= @To_dt and 
+       (isnull(@VFirm,'')='' or dbo.tblSale.vfirm = @VFirm) and
+	   (isnull(@MillCode,'')='' or dbo.tblSale.SlMillCode in ( @MillCode )) and
+	   dbo.tblSale.VType in ('SO','SD','VI')
+
+group by dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode,tblMastAccount_Ml.AcCode ,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,dbo.tblSale.vtype,dbo.tblMastItem.ItCode,dbo.tblMastItem.ItName,dbo.tblMastItem.ItUnit
+
+end
+
+--Cal Op ( i.e. Op+OpIn-OpOut)
+
+Begin 
+	
+Insert into TmpGentbl (Nar6,VFirmName,Vfirm,Vno,MillCode,MillName,ItCode,Nar2,Nar4,amt1,amt9,amt2,Amt10,amt3,amt11,UserName) 
+
+select 'H',VFirmName,Vfirm,Vno ,MillCode,MillName,ItCode,Nar2,Nar4,sum(Amt1)-sum(amt2),sum(amt12)-sum(amt11),
+sum(amt3),sum(amt10),sum(amt4),sum(amt9),@Ucode  
+from  TmpGentbl
+where  UserName = @Ucode and Nar6  = 'Op.Cal'
+
+group by VFirmName,Vfirm,Nar3,Vno ,MillCode,MillName,ItCode,Nar2,Nar4
+
+end
+----------Inward Register
+Begin 
+
+Insert into TmpGentbl (Nar6 ,VFirmName,Vfirm,PartyCode,PartyName,Nar1,BrokerCode,BrokerName,MillCode,MillName,Vno,Amt10,Vtype,Vdt ,VBillNo,VBillDt,Amt1 ,Nar3,Nar4,Nar5,Amt2,Amt12,Amt9,Nar7,UserName) 
+
+select 'I',dbo.tblMastCompany.CName,dbo.tblMastCompany.CCode ,tblMastAccount_Pty.AcOurCode,tblMastAccount_Pty.AcName,dbo.tblMastCompGroup.CGName ,tblMastAccount_Br.AcOurCode,tblMastAccount_Br.AcName,tblMastAccount_Ml.AcOurCode,tblMastAccount_Ml.AcName,tblMastAccount_Ml.AcCode,         
+       dbo.tblPurch.VNo,dbo.tblPurch.VType,dbo.tblPurch.Vdt ,dbo.tblPurch.PurBillNo,dbo.tblPurch.PurBillDt,  
+	   dbo.tblPurch.PurBillAmt,tblMastAccount_Pty.AcBST,tblMastAccount_Pty.AcCST,        
+	   dbo.tblMastItem.ItName,dbo.tblPurchSub.PurSubBag,dbo.tblPurchSub.PurSubWt,dbo.tblPurchSub.PurSubItSrNo, tblMastNarration_Trnpt.Narration, @UCODE      
+from   dbo.tblPurch inner join  dbo.tblMastAccount tblMastAccount_Pty on dbo.tblPurch.PurAcCrCode = tblMastAccount_Pty.AcCode
+                   inner join  dbo.tblMastCompGroup on tblMastAccount_Pty.AcCmpCode = dbo.tblMastCompGroup.CGCode   
+       inner join dbo.tblMastAccount  tblMastAccount_Br on dbo.tblPurch.PurBroker = tblMastAccount_Br.AcCode
+	   inner join dbo.tblMastCompany on dbo.tblPurch.VFirm = dbo.tblMastCompany.CCode   
+	   inner join dbo.tblMastAccount  tblMastAccount_Ml on dbo.tblPurch.PurMillCode  = tblMastAccount_Ml.AcCode 
+	   inner join dbo.tblPurchSub  on dbo.tblPurch.VNo = dbo.tblPurchSub.Vno and dbo.tblPurch.VType  = dbo.tblPurchSub.VType and dbo.tblPurch.VYear = dbo.tblPurchSub.VYear and dbo.tblPurch.VFirm  = dbo.tblPurchSub.VFirm 
+	   inner join dbo.tblMastItem  on dbo.tblPurchSub.PurSubItCode  = dbo.tblMastItem.ItCode 
+	   inner join dbo.tblMastNarration   on dbo.tblPurch.PurTaxCode  = dbo.tblMastNarration.NarrCode  
+	   inner join dbo.tblMastNarration tblMastNarration_Trnpt  on dbo.tblPurch.PurTransport  = tblMastNarration_Trnpt.NarrCode  
+
+where  dbo.tblPurch.VDt >= @Fr_dt and  dbo.tblPurch.VDt <= @To_dt and 
+       (isnull(@VFirm,'')='' or dbo.tblPurch.vfirm = @VFirm) and
+	   (isnull(@MillCode,'')='' or dbo.tblPurch.PurAcCrCode  in ( @MillCode )) and
+	   (dbo.tblPurch.VType) = 'PI'
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
