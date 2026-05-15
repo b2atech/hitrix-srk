@@ -3,17 +3,35 @@ website/node_modules/
 website/build/
 website/.docusaurus/
 
-# VB6 binaries (keep source, ignore compiled output)
-src/*.exe
-src/*.dll
-src/*.vbw
+# Access databases
+**/*.mdb
+**/*.accdb
+**/*.ldb
+**/*.laccdb
 
-# Access DB lock files
-src/*.ldb
-src/*.laccdb
+# Other databases
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+
+# VB6 compiled output
+**/*.exe
+**/*.dll
+**/*.obj
+**/*.vbw
+**/*.vbp~
+
+# Large binary/archive files
+**/*.zip
+**/*.rar
+**/*.7z
+**/*.tar
+**/*.gz
+**/*.iso
+**/*.img
+**/*.bak
 
 # Logs
-src/*.log
 *.log
 
 # OS
