@@ -22,7 +22,7 @@ flowchart TD
     F --> G{Save clicked}
     G --> H[For each row with a date:\nUPDATE tblVoucher\nSET VReconDt = date\nWHERE Vno+Vtype+Vyear]
     G --> I[For each row cleared:\nUPDATE tblVoucher\nSET VReconDt = NULL]
-    H --> J[Running total\ntxttemp(2) shows\nsum of reconciled amounts]
+    H --> J[Running total\nsum of reconciled amounts\ndisplayed on form]
     I --> J
     J --> K([Form closes])
 ```
