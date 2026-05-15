@@ -1,9 +1,9 @@
+# Deployment is handled by Netlify (netlify.toml at repo root).
+# This workflow is kept for reference but disabled.
+# To re-enable GitHub Pages deployment, restore the 'on:' trigger below.
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:

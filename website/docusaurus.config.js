@@ -7,8 +7,9 @@ const config = {
   tagline: 'HITRIX VB6 system documentation & DhanMan migration gap analysis',
   favicon: 'img/favicon.ico',
 
-  url: 'https://b2atech.github.io',
-  baseUrl: '/hitrix-srk/',
+  // Netlify deployment — update URL once site is created on Netlify
+  url: 'https://srk-legacy-docs.netlify.app',
+  baseUrl: '/',
 
   organizationName: 'b2atech',
   projectName: 'hitrix-srk',
