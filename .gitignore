@@ -1,0 +1,21 @@
+# Docusaurus
+website/node_modules/
+website/build/
+website/.docusaurus/
+
+# VB6 binaries (keep source, ignore compiled output)
+src/*.exe
+src/*.dll
+src/*.vbw
+
+# Access DB lock files
+src/*.ldb
+src/*.laccdb
+
+# Logs
+src/*.log
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
