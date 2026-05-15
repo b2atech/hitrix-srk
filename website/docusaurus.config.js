@@ -3,6 +3,8 @@ const { themes: prismThemes } = require('prism-react-renderer');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
+  themes: ['@docusaurus/theme-mermaid'],
+
   title: 'SRK Legacy Docs',
   tagline: 'HITRIX VB6 system documentation & DhanMan migration gap analysis',
   favicon: 'img/favicon.ico',
@@ -16,6 +18,7 @@ const config = {
 
   onBrokenLinks: 'warn',
   markdown: {
+    mermaid: true,
     hooks: {
       onBrokenMarkdownLinks: 'warn',
     },

@@ -24,6 +24,16 @@ const sidebars = {
       ],
     },
     {
+      type: 'category',
+      label: 'Diagrams',
+      collapsed: false,
+      items: [
+        { type: 'doc', id: 'diagrams/er-diagram',          label: 'ER Diagram' },
+        { type: 'doc', id: 'diagrams/business-flows',      label: 'Business Process Flows' },
+        { type: 'doc', id: 'diagrams/module-dependency',   label: 'Module Dependency Map' },
+      ],
+    },
+    {
       type: 'doc',
       id: 'feature-inventory',
       label: '📋 Feature Inventory (146 features)',
