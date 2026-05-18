@@ -73,6 +73,10 @@ Do not mark a legacy feature as present without a source.
 - [dhanman-documents](./dhanman-documents.md)
 - [dhanman-shared-contracts](./dhanman-shared-contracts.md)
 
+## Focused Deep-Dives
+
+- [products-hitrix-comparison](./products-hitrix-comparison.md)
+
 ## Usage Notes
 
 - Start with the service that maps most closely to the legacy business area being reviewed.

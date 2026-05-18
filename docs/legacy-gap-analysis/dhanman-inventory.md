@@ -40,6 +40,7 @@ Expected legacy evidence to capture later:
 | Area | Feature / Object | Legacy VB | Dhanman | Gap | Priority | Evidence | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Masters | Product and product setup tables | To be verified from VB form/report/table | `Present` | Cannot assess until legacy evidence is added | `High` | `products.sql`, `product_group.sql`, `product_reorder_settings.sql`, `Entities/Products`, `Entities/ProductGroups`, `Entities/ProductReorderSettings` | Strong evidence of product master design. |
+| Masters | Product price guardrails (`MinSellingPrice`, `MaxPurchasePrice`) | To be verified from VB form/report/table | `Missing` | Product-level floor/ceiling rate controls are not visible in the current inventory model | `High` | `products.sql`, `ProductConfiguration.cs` | Recommended improvement to prevent accidental low sales rates and high purchase rates by end users. |
 | Masters | Warehouse model | To be verified from VB form/report/table | `Present` | Cannot assess until legacy evidence is added | `High` | `Entities/Warehouses`, `Entities/WarehouseLocations`, `product_warehouse_quantities.sql` | Includes warehouse quantities and locations. |
 | Transactions | Goods receipt and goods issue entities | To be verified from VB form/report/table | `Present` | Cannot assess until legacy evidence is added | `High` | `Entities/GoodsReceiptHeaders`, `Entities/GoodsReceiptDetails`, `Entities/GoodsIssueHeaders`, `Entities/GoodsIssueDetails` | Core document entities are present. |
 | Controls | Stock movement and reservation tables | To be verified from VB form/report/table | `Present` | Cannot assess until legacy evidence is added | `High` | `stock_ledgers.sql`, `stock_reservations.sql`, `stock_movement_types.sql`, `Entities/StockLedgers`, `Entities/StockReservations` | Good parity anchor for later VB table mapping. |
@@ -114,6 +115,7 @@ All SQL table/object scripts currently visible under `dhanman-inventory/src/Dhan
 ## Gaps And Recommendations
 
 - Map legacy VB stock tables first against `stock_ledgers`, `stock_reservations`, and quantity tables because those usually drive the hardest migration questions.
+- Add product-level price guardrails with `MinSellingPrice` and `MaxPurchasePrice`, then enforce them in sales and purchase entry flows to reduce operator mistakes.
 - Track whether VB used post/approve/cancel states for receipt, issue, adjustment, transfer, and count separately.
 - Note every legacy report that depended on stock ledger or inventory balance logic; those often reveal hidden business rules.
 - If VB had direct purchase or sales posting into stock, capture that clearly because Dhanman uses cross-service integration patterns.
@@ -129,6 +131,7 @@ All SQL table/object scripts currently visible under `dhanman-inventory/src/Dhan
 ## Open Legacy Questions
 
 - Which VB tables represented stock ledger, on-hand balance, and reservation logic?
+- Did VB enforce any item-wise minimum sales rate or maximum purchase rate, or was it handled only by user training and approvals?
 - Did VB store warehouse locations separately from warehouses?
 - Which VB transactions were draft-only versus posted-to-stock?
 - Did VB have stock transfer, stock count, and adjustment workflows with approvals?
